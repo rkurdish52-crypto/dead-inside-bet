@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0f0d">
+<meta name="description" content="DEAD INSIDE BET — sports app prototype">
+<link rel="manifest" href="manifest.json">
+<title>DEAD INSIDE BET</title>
+<style>
+:root{--bg:#090c0a;--panel:#151b18;--panel2:#1c2520;--green:#53d887;--muted:#9aa7a0;--line:#29342e}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f4f7f5;font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+header{position:sticky;top:0;z-index:5;background:#090c0af2;backdrop-filter:blur(12px);padding:16px 16px 12px;border-bottom:1px solid var(--line)}
+.brand{color:var(--green);font-weight:900;letter-spacing:1px;font-size:19px}.tag{font-size:10px;color:var(--muted);letter-spacing:2px;margin-top:3px}
+main{padding:16px 14px 100px;max-width:720px;margin:auto}
+.hero{background:linear-gradient(135deg,#1a3426,#111714);border:1px solid #2e6042;border-radius:20px;padding:20px;margin-bottom:22px}
+.eyebrow{color:var(--green);font-weight:800;letter-spacing:2px;font-size:11px}.hero h1{font-size:25px;margin:8px 0}.hero p{color:#bdc8c1;font-size:12px;margin:0;line-height:1.7}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}.section-title{font-size:18px;font-weight:800;margin:20px 2px 12px}
+.pills{display:flex;gap:8px;overflow:auto;padding-bottom:4px;margin-bottom:14px}.pill{white-space:nowrap;background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:9px 14px;color:#dce5df;font-size:12px}.pill.active{background:#1b3828;color:var(--green);border-color:#326b49}
+.match{background:var(--panel);border:1px solid #222d26;border-radius:17px;padding:15px;margin-bottom:12px}
+.league{color:var(--muted);font-size:12px}.time{color:var(--green);font-weight:800;font-size:12px}.teams{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:16px 0;font-weight:750}.vs{font-size:10px;color:var(--muted)}
+.odds{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.odd{border:1px solid #2d4938;background:#132019;border-radius:11px;padding:10px 4px;color:var(--green);font-weight:800}.odd small{display:block;color:var(--muted);font-size:10px;font-weight:500;margin-bottom:4px}.odd.selected{background:var(--green);color:#07110b}.odd.selected small{color:#14311f}
+.notice{font-size:11px;color:var(--muted);line-height:1.6;margin:14px 3px}
+.page{display:none}.page.active{display:block}.empty{text-align:center;padding:54px 18px;color:var(--muted);line-height:1.8}.empty .emoji{font-size:40px}
+.bottom{position:fixed;bottom:0;left:0;right:0;z-index:10;display:grid;grid-template-columns:repeat(3,1fr);background:#111713f5;border-top:1px solid var(--line);padding:8px 8px calc(8px + env(safe-area-inset-bottom));backdrop-filter:blur(12px)}
+.nav{background:none;border:0;color:var(--muted);padding:8px 2px;font-size:11px}.nav span{display:block;font-size:20px;margin-bottom:3px}.nav.active{color:var(--green)}
+.primary{width:100%;background:var(--green);border:0;border-radius:12px;padding:13px;color:#08130c;font-weight:900;font-size:14px}
+label{display:block;color:var(--muted);font-size:12px;margin:14px 0 7px}input,select{width:100%;padding:13px;border-radius:11px;background:#0e1310;border:1px solid var(--line);color:#fff;font-size:14px}
+.toast{position:fixed;bottom:90px;left:16px;right:16px;background:#26352c;border:1px solid #42634d;padding:13px;border-radius:12px;display:none;text-align:center;font-size:13px}
+</style>
+</head>
+<body>
+<header><div class="brand">DEAD INSIDE BET</div><div class="tag">YOUR GAME. YOUR ODDS.</div></header>
+<main>
+<section id="matches" class="page active">
+ <div class="hero"><div class="eyebrow">MATCHDAY</div><h1>كل المباريات بمكان واحد</h1><p>واجهة تجريبية للمباريات والاحتمالات. الأرقام المعروضة أمثلة وليست بيانات مباشرة.</p></div>
+ <div class="pills"><button class="pill active" onclick="filterMatches('all',this)">الكل</button><button class="pill" onclick="filterMatches('live',this)">مباشر</button><button class="pill" onclick="filterMatches('upcoming',this)">قادمة</button></div>
+ <div class="section-title">مباريات اليوم</div>
+ <div id="match-list"></div>
+ <p class="notice">تنبيه: هذا نموذج واجهة فقط. لا توجد رهانات مالية أو إيداع أو سحب، والفرق والاحتمالات للتوضيح فقط.</p>
+</section>
+<section id="slip" class="page">
+ <div class="section-title">كوبون التوقعات</div>
+ <div id="slip-content" class="empty"><div class="emoji">🎫</div>ماكو اختيارات بعد.<br>اختَر احتمالاً من صفحة المباريات حتى يظهر هنا.</div>
+</section>
+<section id="account" class="page">
+ <div class="hero"><div class="eyebrow">ACCOUNT</div><h1>حساب المستخدم</h1><p>تصميم أولي — الحسابات الحقيقية غير مربوطة بعد.</p></div>
+ <div class="match">
+ <label>البريد الإلكتروني (تجريبي)</label><input id="email" type="email" placeholder="name@example.com">
+ <label>كلمة المرور</label><input type="password" placeholder="كلمة المرور — لا تدخل بيانات حقيقية">
+ <button class="primary" style="margin-top:16px" onclick="toast('تسجيل الدخول غير مفعّل في النسخة التجريبية.')">دخول تجريبي</button>
+ </div>
+ <div class="match"><div class="row"><strong>المحفظة</strong><span style="color:var(--green)">غير مفعّلة</span></div><p class="notice">لا يوجد رصيد حقيقي أو نظام دفع في هذا النموذج.</p></div>
+ <div class="match"><strong>المساعدة والأمان</strong><p class="notice">قبل أي إطلاق فعلي، يلزم فحص قانوني وأمني وترخيص مناسب.</p></div>
+</section>
+</main>
+<nav class="bottom">
+ <button class="nav active" onclick="showPage('matches',this)"><span>⚽</span>المباريات</button>
+ <button class="nav" onclick="showPage('slip',this)"><span>🎫</span>الكوبون</button>
+ <button class="nav" onclick="showPage('account',this)"><span>👤</span>حسابي</button>
+</nav>
+<div id="toast" class="toast"></div>
+<script>
+const matches=[
+ {id:1,league:'الدوري الإنجليزي • مثال',home:'أرسنال',away:'تشيلسي',time:'18:30',status:'upcoming',odds:['1.85','3.40','4.10']},
+ {id:2,league:'الدوري الإسباني • مثال',home:'ريال مدريد',away:'إشبيلية',time:'20:00',status:'upcoming',odds:['1.55','4.00','5.80']},
+ {id:3,league:'الدوري الإيطالي • مثال',home:'إنتر',away:'روما',time:'21:45',status:'upcoming',odds:['1.90','3.25','3.90']}
+];
+let selection=null;
+function renderMatches(list=matches){document.getElementById('match-list').innerHTML=list.map(m=>`<article class="match"><div class="row"><span class="league">🏆 ${m.league}</span><span class="time">${m.time}</span></div><div class="teams"><span>${m.home}</span><span class="vs">VS</span><span>${m.away}</span></div><div class="odds">${[['1',m.odds[0]],['X',m.odds[1]],['2',m.odds[2]]].map(([k,v])=>`<button class="odd ${selection&&selection.id===m.id&&selection.pick===k?'selected':''}" onclick="choose(${m.id},'${k}','${v}')"><small>${k==='1'?'فوز '+m.home:k==='X'?'تعادل':'فوز '+m.away}</small>${v}</button>`).join('')}</div></article>`).join('')}
+function choose(id,pick,odd){const m=matches.find(x=>x.id===id);selection={id,pick,odd,match:m};renderMatches();renderSlip();toast('تمت إضافة اختيار تجريبي إلى الكوبون.')}
+function renderSlip(){const el=document.getElementById('slip-content');if(!selection){el.innerHTML='<div class="emoji">🎫</div>ماكو اختيارات بعد.<br>اختَر احتمالاً من صفحة المباريات حتى يظهر هنا.';return}el.className='';el.innerHTML=`<div class="match"><div class="row"><strong>${selection.match.home} × ${selection.match.away}</strong><button class="pill" onclick="clearSelection()">حذف</button></div><p class="notice">اختيار: ${selection.pick} • معامل تجريبي: ${selection.odd}</p><p class="notice">هذا اختيار تجريبي فقط. لا يمكن وضع رهان أو إدخال مبلغ حقيقي.</p></div><button class="primary" onclick="toast('الرهانات المالية غير متاحة في النموذج.')">تأكيد الاختيار التجريبي</button>`}
+function clearSelection(){selection=null;renderMatches();renderSlip()}
+function showPage(id,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}
+function filterMatches(type,btn){document.querySelectorAll('.pills .pill').forEach(x=>x.classList.remove('active'));btn.classList.add('active');renderMatches(type==='all'?matches:matches.filter(m=>m.status===type))}
+let toastTimer;function toast(s){const el=document.getElementById('toast');el.textContent=s;el.style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.style.display='none',2400)}
+renderMatches();
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
+</script>
+</body></html>
